@@ -23,12 +23,12 @@ const usuariosSchema = Joi.object({
   edad: Joi.number()
     .integer()
     .min(18)
-    .max(120)
+    .max(100)
     .required()
     .messages({
       'number.base': 'La edad debe ser un número',
       'number.min': 'La edad debe ser mayor o igual a 18',
-      'number.max': 'La edad no puede ser mayor a 120',
+      'number.max': 'La edad no puede ser mayor a 100',
       'any.required': 'La edad es requerida'
     }),
 
@@ -37,7 +37,7 @@ const usuariosSchema = Joi.object({
 
 const usuariosUpdateSchema = Joi.object({
   nombre: Joi.string().min(3).max(100),
-  edad: Joi.number().integer().min(18).max(120),
+  edad: Joi.number().integer().min(18).max(100),
   email: Joi.string().email()
 }).min(1);
 
