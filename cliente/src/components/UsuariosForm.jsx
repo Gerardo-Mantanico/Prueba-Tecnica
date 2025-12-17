@@ -7,6 +7,12 @@ export const UsuariosForm = ({ usuarioEdit, onSubmit, onCancel }) => {
     edad: ''
   });
 
+  const [errors, setErrors] = useState({
+    nombre: '',
+    email: '',
+    edad: ''
+  });
+
   useEffect(() => {
     if (usuarioEdit) {
       setFormData({
@@ -14,19 +20,62 @@ export const UsuariosForm = ({ usuarioEdit, onSubmit, onCancel }) => {
         email: usuarioEdit.email,
         edad: usuarioEdit.edad
       });
+      setErrors({ nombre: '', email: '', edad: '' });
     }
   }, [usuarioEdit]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    // Actualizar el valor
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+
+    // Validar en tiempo real
+    let errorMsg = '';
+    
+    if (name === 'nombre') {
+      if (value.length > 0 && value.length < 3) {
+        errorMsg = 'El nombre debe tener al menos 3 caracteres';
+      } else if (value.length > 100) {
+        errorMsg = 'El nombre no puede exceder 100 caracteres';
+      }
+    }
+    
+    if (name === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (value.length > 0 && !emailRegex.test(value)) {
+        errorMsg = 'El email no es válido';
+      }
+    }
+    
+    if (name === 'edad') {
+      const edadNum = parseInt(value);
+      if (value !== '') {
+        if (edadNum < 18) {
+          errorMsg = 'La edad debe ser mayor o igual a 18 años';
+        } else if (edadNum > 100) {
+          errorMsg = 'La edad no puede ser mayor a 100 años';
+        }
+      }
+    }
+    
+    setErrors(prev => ({
+      ...prev,
+      [name]: errorMsg
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validar que no haya errores
+    if (errors.nombre || errors.email || errors.edad) {
+      alert("Por favor corrige los errores antes de continuar");
+      return;
+    }
 
     if (!formData.nombre || !formData.email || !formData.edad) {
       alert("Por favor completa todos los campos");
@@ -43,6 +92,7 @@ export const UsuariosForm = ({ usuarioEdit, onSubmit, onCancel }) => {
 
     if (!usuarioEdit) {
       setFormData({ nombre: '', email: '', edad: '' });
+      setErrors({ nombre: '', email: '', edad: '' });
     }
   };
 
@@ -80,8 +130,18 @@ export const UsuariosForm = ({ usuarioEdit, onSubmit, onCancel }) => {
             value={formData.nombre}
             onChange={handleChange}
             placeholder="Ej: Juan Pérez"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all ${
+              errors.nombre ? 'border-red-500' : 'border-gray-300'
+            }`}
           />
+          {errors.nombre && (
+            <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              {errors.nombre}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -95,8 +155,18 @@ export const UsuariosForm = ({ usuarioEdit, onSubmit, onCancel }) => {
             value={formData.email}
             onChange={handleChange}
             placeholder="correo@ejemplo.com"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all ${
+              errors.email ? 'border-red-500' : 'border-gray-300'
+            }`}
           />
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              {errors.email}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -107,13 +177,23 @@ export const UsuariosForm = ({ usuarioEdit, onSubmit, onCancel }) => {
             type="number"
             id="edad"
             name="edad"
-            min="0"
-            max="100"
+            min="18"
+            max="120"
             value={formData.edad}
             onChange={handleChange}
-            placeholder="Ej: 25"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+            placeholder="Ej: 25 (entre 18 y 120)"
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all ${
+              errors.edad ? 'border-red-500' : 'border-gray-300'
+            }`}
           />
+          {errors.edad && (
+            <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              {errors.edad}
+            </p>
+          )}
         </div>
 
         <div className="flex gap-4 pt-4">

@@ -41,6 +41,7 @@ coverage/
 .idea/
 *.sublime-*
 *.code-workspace
+.history/
 
 # Temporal
 tmp/
@@ -53,4 +54,4 @@ temp/
 *.crt
 
 #history
-.history/
+.history
