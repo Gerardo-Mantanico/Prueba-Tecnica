@@ -6,8 +6,9 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Swagger
+// Configuración de Swagger
 const swaggerDocs = swaggerJsdoc({
   definition: {
     openapi: '3.0.0',
@@ -16,27 +17,29 @@ const swaggerDocs = swaggerJsdoc({
       version: '1.0.0',
       description: 'API de Productos',
     },
-    servers: [{ url: 'http://localhost:5000' }],
+    servers: [
+      { url: `https://${process.env.RAILWAY_STATIC_URL}` || 'http://localhost:5000' }
+    ],
   },
   apis: ['./src/router/*.js'],
 });
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Middlewares
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*'
+}));
 
 // Rutas
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/api/v1', router);
 
-// Iniciar servidor
+// Conexión y Arranque
 sequelize.sync({ force: false })
   .then(() => {
-    console.log('Database connected and synced');
-    app.listen(5000, () => {
-      console.log('Server is running on port 5000');
+    console.log('✅ Database connected');
+    app.listen(PORT, () => {
+      console.log(`🚀 Server ready on port ${PORT}`);
     });
   })
-  .catch(err => {
-    console.error('Unable to connect to the database:', err);
-  });
+  .catch(err => console.error('❌ Database error:', err));
