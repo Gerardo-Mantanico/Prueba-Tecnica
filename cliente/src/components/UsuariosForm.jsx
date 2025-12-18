@@ -178,7 +178,7 @@ export const UsuariosForm = ({ usuarioEdit, onSubmit, onCancel }) => {
             id="edad"
             name="edad"
             min="18"
-            max="120"
+            max="100"
             value={formData.edad}
             onChange={handleChange}
             placeholder="Ej: 25 (entre 18 y 120)"
