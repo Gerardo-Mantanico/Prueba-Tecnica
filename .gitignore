@@ -6,6 +6,7 @@
 # Dependencias
 node_modules/
 */node_modules/
+cliente/.vite/
 
 # Logs
 logs/

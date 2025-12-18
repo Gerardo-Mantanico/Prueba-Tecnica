@@ -25,8 +25,10 @@ export const useUsuarios = () => {
         setLoading(true);
         setError(null);
         try {
-            await usuariosService.createUsuario(data);
-            await fetchUsuarios();
+            const response = await usuariosService.createUsuario(data);
+            // Agregar el nuevo usuario a la lista local sin recargar
+            const nuevoUsuario = response.data;
+            setUsuarios(prev => [...prev, nuevoUsuario]);
             return true;
         } catch (err) {
             setError(err.response?.data?.message || err.message || 'Error al crear usuario');
@@ -40,8 +42,14 @@ export const useUsuarios = () => {
         setLoading(true);
         setError(null);
         try {
-            await usuariosService.updateUsuario(id, data);
-            await fetchUsuarios();
+            const response = await usuariosService.updateUsuario(id, data);
+            // Actualizar el usuario en la lista local sin recargar
+            const usuarioActualizado = response.data;
+            setUsuarios(prev => 
+                prev.map(usuario => 
+                    usuario.id === id ? usuarioActualizado : usuario
+                )
+            );
             return true;
         } catch (err) {
             setError(err.response?.data?.message || err.message || 'Error al actualizar usuario');
@@ -56,7 +64,8 @@ export const useUsuarios = () => {
         setError(null);
         try {
             await usuariosService.deleteUsuario(id);
-            await fetchUsuarios();
+            // Eliminar el usuario de la lista local sin recargar
+            setUsuarios(prev => prev.filter(usuario => usuario.id !== id));
             return true;
         } catch (err) {
             setError(err.response?.data?.message || err.message || 'Error al eliminar usuario');
